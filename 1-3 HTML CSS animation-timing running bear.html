@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Running Bear</title>
+    <style>
+      .bear-wrap {
+        position: relative;
+        height: 336px;
+        background: url(images/1-3\ HTML\ CSS\ bg.png) no-repeat;
+        animation: move-bg 10s linear infinite;
+      }
+      .bear {
+        position: absolute;
+        top: 236px;
+        width: 200px;
+        height: 100px;
+        background: url(images/1-3\ HTML\ CSS\ bear.png) no-repeat;
+        /* 元素可以添加多個動畫，用逗號分隔 */
+        animation: bear 0.5s steps(7) infinite, move-bear 3s linear forwards;
+      }
+      @keyframes bear {
+        0% {
+          background-positions: 0 0;
+        }
+        100% {
+          background-position: -1400px 0;
+        }
+      }
+      @keyframes move-bear {
+        0% {
+          left: 0;
+        }
+        100% {
+          left: 50%;
+          transform: translateX(-50%);
+        }
+      }
+      @keyframes move-bg {
+        0% {
+          background-positions: 0 0;
+        }
+        100% {
+          background-position: -2500px 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bear-wrap">
+      <div class="bear"></div>
+    </div>
+  </body>
+</html>

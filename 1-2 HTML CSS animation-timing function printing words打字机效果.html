@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>animation-timing function printing words打字机效果</title>
+    <style>
+      .printer {
+        overflow: hidden;
+        width: 0;
+        height: 60px;
+        background-color: lightseagreen;
+        font-size: 40px;
+        color: yellow;
+        /* 強制文字一行內顯示 */
+        white-space: nowrap;
+        animation: wider 4s steps(5) forwards;
+      }
+      @keyframes wider {
+        0% {
+          width: 0;
+        }
+        100% {
+          width: 200px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="printer">掬水月在手</div>
+  </body>
+</html>
