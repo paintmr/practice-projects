@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D box burning over</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      .turning-over-box {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        margin: 100px auto;
+        transition: all 0.6s;
+        transform-style: preserve-3d;
+      }
+      .turning-over-box:hover {
+        cursor: pointer;
+        transform: rotateY(180deg);
+      }
+      .front,
+      .back {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        font-size: 30px;
+        line-height: 300px;
+        text-align: center;
+        border-radius: 50%;
+      }
+      .front {
+        background-color: #065279;
+        color: #fff143;
+        z-index: 1;
+      }
+      .back {
+        background-color: #fff143;
+        color: #065279;
+        transform: rotateY(180deg);
+      }
+      .turning-over-boxes {
+        margin: 100px;
+      }
+      .turning-over-boxes ul li {
+        float: left;
+        width: 130px;
+        height: 36px;
+        margin-right: 20px;
+        list-style: none;
+        perspective: 1000px;
+      }
+      .turning-over-box-item {
+        position: relative;
+        transform-style: preserve-3d;
+        transition: all 0.4s;
+      }
+      .turning-over-box-item:hover {
+        cursor: pointer;
+        transform: rotateX(90deg);
+      }
+      .front-side,
+      .bottom-side {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 120px;
+        height: 26px;
+        padding: 5px;
+        line-height: 26px;
+        text-align: center;
+      }
+      .front-side {
+        background-color: #065279;
+        color: #fff143;
+        z-index: 1;
+        /* 然後再把front盒子迎面移動一下，這樣可以保證旋轉的軸一直不變 */
+        transform: translateZ(18px);
+      }
+      .bottom-side {
+        background-color: #fff143;
+        color: #065279;
+        /* 重要：必須先寫移動後寫旋轉 */
+        /* 先把bottom盒子移動下去 */
+        transform: translateY(18px) rotateX(-90deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="turning-over-box">
+      <div class="front">兩個黃鸝鳴翠柳</div>
+      <div class="back">一行白鷺上青天</div>
+    </div>
+    <div class="turning-over-boxes">
+      <ul>
+        <li>
+          <div class="turning-over-box-item">
+            <div class="front-side">水晶簾動微風起</div>
+            <div class="bottom-side">滿架薔薇一院香</div>
+          </div>
+        </li>
+        <li>
+          <div class="turning-over-box-item">
+            <div class="front-side">稻花香裡說豐年</div>
+            <div class="bottom-side">聽取蛙聲一片</div>
+          </div>
+        </li>
+        <li>
+          <div class="turning-over-box-item">
+            <div class="front-side">綠樹蔭濃夏日長</div>
+            <div class="bottom-side">樓台倒影入池塘</div>
+          </div>
+        </li>
+        <li>
+          <div class="turning-over-box-item">
+            <div class="front-side">梅子留酸軟齒牙</div>
+            <div class="bottom-side">芭蕉分綠與窗紗</div>
+          </div>
+        </li>
+        <li>
+          <div class="turning-over-box-item">
+            <div class="front-side">晴日暖風生麥氣</div>
+            <div class="bottom-side">綠蔭幽草勝花時</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>

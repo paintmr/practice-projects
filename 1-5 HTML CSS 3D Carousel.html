@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>1-5 HTML CSS 3D Carousel</title>
+    <style>
+      .carousel-wrap {
+        perspective: 1200px;
+      }
+      .carousel {
+        position: relative;
+        width: 300px;
+        height: 200px;
+        margin: 150px auto;
+        transform-style: preserve-3d;
+        animation: rotate 20s linear infinite;
+        background: url(images/1-5\ HTML\ CSS\ 3D\ Carousel0.jpg) no-repeat;
+        background-size: cover;
+      }
+      .carousel:hover {
+        cursor: pointer;
+        animation-play-state: paused;
+      }
+      @keyframes rotate {
+        0% {
+          transform: rotateY(0);
+        }
+        100% {
+          transform: rotateY(360deg);
+        }
+      }
+      .carousel div {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url(images/1-5\ HTML\ CSS\ 3D\ Carousel.png) no-repeat;
+        background-size: cover;
+      }
+      .carousel div:first-child {
+        transform: translateZ(300px);
+      }
+      .carousel div:nth-child(2) {
+        /* 先旋轉，再沿Z軸移動 */
+        transform: rotateY(60deg) translateZ(300px);
+      }
+      .carousel div:nth-child(3) {
+        /* 先旋轉，再沿Z軸移動 */
+        transform: rotateY(120deg) translateZ(300px);
+      }
+      .carousel div:nth-child(4) {
+        /* 先旋轉，再沿Z軸移動 */
+        transform: rotateY(180deg) translateZ(300px);
+      }
+      .carousel div:nth-child(5) {
+        /* 先旋轉，再沿Z軸移動 */
+        transform: rotateY(240deg) translateZ(300px);
+      }
+      .carousel div:nth-child(6) {
+        /* 先旋轉，再沿Z軸移動 */
+        transform: rotateY(300deg) translateZ(300px);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="carousel-wrap">
+      <div class="carousel">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+  </body>
+</html>
