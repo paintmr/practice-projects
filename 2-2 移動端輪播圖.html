@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body,
+      div,
+      ul,
+      li {
+        margin: 0;
+        padding: 0;
+      }
+      ul {
+        list-style-type: none;
+      }
+      #carousel {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        margin: 30px auto;
+      }
+      .pic-wrap {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      #pics {
+        position: absolute;
+        margin-left: -100%;
+        width: 500%;
+      }
+      #pics li {
+        width: 20%;
+        float: left;
+      }
+      #pics img {
+        width: 100%;
+        height: 500px;
+      }
+      #dots {
+        position: absolute;
+        bottom: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      #dots li {
+        float: left;
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        border-radius: 50%;
+        background-color: #678f8d;
+        cursor: pointer;
+      }
+      #dots .selected {
+        background-color: #ff6670;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="carousel">
+      <div class="pic-wrap">
+        <ul id="pics">
+          <li>
+            <a href="#"><img src="./picm1.jpg" alt="" /></a>
+          </li>
+          <li>
+            <a href="#"><img src="./picm2.jpg" alt="" /></a>
+          </li>
+          <li>
+            <a href="#"><img src="./picm3.jpg" alt="" /></a>
+          </li>
+        </ul>
+      </div>
+      <ul id="dots"></ul>
+    </div>
+    <script>
+      var pics = document.querySelector("#pics");
+      var dots = document.querySelector("#dots");
+      // 圖片的寬度
+      var w = pics.children[0].offsetWidth;
+      // 目前所顯示的圖片索引號
+      var index = 0;
+      // 1 自動生成下部按鈕
+      for (let i = 0; i < pics.children.length; i++) {
+        var li = document.createElement("li");
+        // 給第1個li加上選中的類
+        if (i === 0) {
+          li.className = "selected";
+        }
+        dots.appendChild(li);
+      }
+      // 2 克隆首圖和末圖，分別放在ul的末尾和開頭
+      var picFirst = pics.children[0].cloneNode(true);
+      var picLast = pics.children[pics.children.length - 1].cloneNode(true);
+      pics.appendChild(picFirst);
+      pics.insertBefore(picLast, pics.children[0]);
+      // 3 利用定時器輪播圖片
+      var timer = setInterval(function () {
+        index++;
+        var movePicsX = -index * w;
+        pics.style.transition = "all .3s";
+        pics.style.transform = "translateX(" + movePicsX + "px)";
+      }, 2000);
+      // 3-2等過度完成後，再去判斷監聽過度完成的事件 transitionend
+      pics.addEventListener("transitionend", function () {
+        // 3-2-1如果圖片滾動到了ul末尾的克隆，則快速移動到ul的首圖，此時要去掉動畫效果
+        if (index >= dots.children.length) {
+          index = 0;
+          pics.style.transition = "none";
+          var movePicsX = -index * w;
+          pics.style.transform = "translateX(" + movePicsX + "px)";
+        } //3-2-2 如果倒著走
+        else if (index <= -1) {
+          index == dots.children.length - 1;
+          var movePicsX = -index * w;
+          pics.style.transform = "translateX(" + movePicsX + "px)";
+        }
+        // 4 底部相應按鈕被選中
+        // 4-1 把按鈕li中帶有selected的類名選出來去掉類名remove
+        dots.querySelector(".selected").classList.remove("selected");
+        // 4-2 讓當前索引號所在的li加上selected  add
+        dots.children[index].classList.add("selected");
+        // 4-3 得等到過度結束之後，所以這個寫在transitionend事件裡面
+      });
+
+      // 5 手指滑動輪播圖
+      // 5-1 觸摸元素touchstart: 獲取手指初始坐標
+      var startX = 0;
+      // 設定移動距離
+      var moveX = 0;
+      pics.addEventListener("touchstart", function (e) {
+        startX = e.targetTouches[0].pageX;
+        // 只要開始拖動，就停止定時器
+        clearInterval(timer);
+      });
+      // 5-2 移動手指touchmove: 計算手指的滑動距離，並且移動盒子
+      pics.addEventListener("touchmove", function (e) {
+        // 計算移動距離
+        moveX = e.targetTouches[0].pageX - startX;
+        // 移動盒子：盒子後來的位置=盒子原來的位置+手指移動的距離
+        var movePicsX = -index * w + moveX;
+        //手指拖動的時候，不需要動畫效果，所以要取消過度效果
+        pics.style.transition = "none";
+        pics.style.transform = "translateX(" + movePicsX + "px)";
+      });
+    </script>
+  </body>
+</html>

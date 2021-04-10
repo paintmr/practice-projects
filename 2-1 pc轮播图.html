@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body,
+      div,
+      ul,
+      li {
+        margin: 0;
+        padding: 0;
+      }
+      ul {
+        list-style-type: none;
+      }
+      #carousel {
+        position: relative;
+        width: 870px;
+        height: 500px;
+        margin: 30px auto;
+      }
+      #carousel span {
+        position: absolute;
+        display: none;
+        width: 50px;
+        height: 50px;
+        top: 50%;
+        transform: translateY(-50%);
+        border-radius: 50%;
+        background-color: #ff6670;
+      }
+      #carousel span:hover {
+        cursor: pointer;
+      }
+      #btnl {
+        left: -50px;
+        z-index: 2;
+      }
+      #btnr {
+        right: -50px;
+        z-index: 2;
+      }
+      .pic-wrap {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      #pics {
+        position: relative;
+        width: 500%;
+      }
+      #pics li {
+        float: left;
+      }
+      #pics img {
+        width: 870px;
+        height: 500px;
+      }
+      #dots {
+        position: absolute;
+        bottom: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      #dots li {
+        float: left;
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        border-radius: 50%;
+        background-color: #678f8d;
+        cursor: pointer;
+      }
+      #dots .selected {
+        background-color: #ff6670;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="carousel">
+      <span id="btnl"></span>
+      <span id="btnr"></span>
+      <div class="pic-wrap">
+        <ul id="pics">
+          <li>
+            <a href="#"><img src="./images/pic1.jpeg" alt="" /></a>
+          </li>
+          <li>
+            <a href="#"><img src="./images/pic2.jpg" alt="" /></a>
+          </li>
+          <li>
+            <a href="#"><img src="./images/pic3.jpg" alt="" /></a>
+          </li>
+          <li>
+            <a href="#"><img src="./images/pic4.jpg" alt="" /></a>
+          </li>
+        </ul>
+      </div>
+      <ul id="dots"></ul>
+    </div>
+    <script>
+      // 1 動畫函數
+      function animate(obj, target, callback) {
+        clearInterval(obj.timer);
+        obj.timer = setInterval(function () {
+          // 要對step取整，否則盒子到不了目標位置，總會差一點。要看step是正值還是賦值，如果是正值，就向上取整；如果是負值，就向下取整。
+          var step = (target - obj.offsetLeft) / 10;
+          step = step > 0 ? Math.ceil(step) : Math.floor(step);
+          if (obj.offsetLeft === target) {
+            clearInterval(obj.timer);
+            // 回調函數寫在定時器結束裡面
+            // if (callback) {
+            //   callback();
+            // }
+            // 上面三行代碼相當於下面這一行，這叫短路運算。如果左邊為true才會執行右邊的代碼；如果左邊為false，就不再執行右邊的代碼了。
+            callback && callback();
+            return;
+          }
+          obj.style.left = obj.offsetLeft + step + "px";
+        }, 15);
+      }
+      var carousel = document.querySelector("#carousel");
+      var btnl = document.querySelector("#btnl");
+      var btnr = document.querySelector("#btnr");
+      var pics = document.querySelector("#pics");
+      var dots = document.querySelector("#dots");
+      // 單張圖片的寬度，一定要記得給圖片定位，否則無法通過animate讓其移動
+      var picW = pics.querySelector("li").clientWidth;
+      // 記錄被選中的下部按鈕
+      var dotI = 0;
+      // 記錄當前是第幾張圖片
+      var picI = 0;
+      // 2 鼠標經過，顯示隱藏左右按鈕
+      // 11 鼠標經過，停止/開始自動播放
+      carousel.addEventListener("mouseover", function () {
+        btnl.style.display = "block";
+        btnr.style.display = "block";
+        clearInterval(timer);
+        timer = null;
+      });
+      carousel.addEventListener("mouseout", function () {
+        btnl.style.display = "none";
+        btnr.style.display = "none";
+        timer = setInterval(function () {
+          // 手動調用點擊事件
+          btnr.click();
+        }, 2000);
+      });
+      // 3 根據圖片的張數，動態生成底部按鈕
+      for (let i = 0; i < pics.children.length; i++) {
+        var li = document.createElement("li");
+        if (i === 0) {
+          li.className = "selected";
+        }
+        dots.appendChild(li);
+        // 4 點擊底部按鈕，選中相應的按鈕
+        // 生成li的時候，直接綁定點擊事件
+        li.addEventListener("click", function () {
+          // 把所有按鈕變成非選中狀態
+          for (let i = 0; i < dots.children.length; i++) {
+            dots.children[i].className = "";
+          }
+          //選中點擊的按鈕
+          this.className = "selected";
+          // 記錄被選中的是第幾個按鈕，同時告訴左右button的按鈕記錄當前是第幾張圖片被選中
+          dotI = i;
+          picI = i;
+          //5 切換到相應的圖片
+          animate(pics, -picW * i);
+        });
+      }
+      // 6 點擊右側按鈕，每點擊一次，ul向左移動一張圖片的距離
+      // 7 把第一張圖片克隆一下，然後放到pics UL的最後（這樣克隆出來的li，不會導致下部按鈕多出一個來）(因為這個克隆寫作了生成下部按鈕的後面。根據圖片生成下部按鈕的時候，還沒有這個克隆，所以不會多出下部按鈕)
+      var pic1 = pics.children[0].cloneNode(true);
+      pics.appendChild(pic1);
+      // 12 （共12步）節流閥。把監聽點擊左右按鈕裡面所有的代碼寫到節流閥裡。一開始flag=true，監聽開始後flag=false，動畫結束時（通過animate的回調函數確定動畫結束，因為這個函數在動畫結束時執行）flag=false。
+      var flag = true; //設置節流閥
+      btnr.addEventListener("click", function () {
+        if (flag) {
+          flag = false; //關閉節流閥
+          if (picI === pics.children.length - 1) {
+            picI = 0;
+            pics.style.left = 0;
+          }
+          picI++;
+          animate(pics, -picW * picI, function () {
+            flag = true; //打開節流閥
+          });
+          // 8 點擊右側按鈕時，底部按鈕的選中狀態一起變化
+          // 把底部所有按鈕變為非選中狀態
+          dotI++;
+          for (let i = 0; i < dots.children.length; i++) {
+            dots.children[i].className = "";
+          }
+          // 選中相應的底部按鈕
+          if (dotI < dots.children.length) {
+            dots.children[dotI].className = "selected";
+          } else if ((dotI = dots.children.length)) {
+            //如果當前到了克隆圖片（即ul的最後一張）
+            dots.children[0].className = "selected";
+            dotI = 0;
+          }
+        }
+      });
+      // 9 點擊左側按鈕，移動圖片
+      btnl.addEventListener("click", function () {
+        if (flag) {
+          flag = false;
+          // 如果當前是首圖，先快速跳轉到ul末圖，即克隆圖片，然後再進行動畫
+          if (picI === 0) {
+            picI = pics.children.length - 1;
+            dotI = picI;
+            pics.style.left = -picW * picI + "px";
+          }
+          picI--;
+          animate(pics, -picW * picI, function () {
+            flag = true;
+          });
+          // 10 選中下部相應按鈕
+          // 把底部所有按鈕變為非選中狀態
+          dotI--;
+          for (let i = 0; i < dots.children.length; i++) {
+            dots.children[i].className = "";
+          }
+          // 選中相應的底部按鈕
+          if (dotI < dots.children.length) {
+            dots.children[dotI].className = "selected";
+          }
+        }
+      });
+      // 11 鼠標經過，開始或者停止自動播放
+      var timer = setInterval(function () {
+        // 手動調用點擊事件
+        btnr.click();
+      }, 2000);
+    </script>
+  </body>
+</html>
