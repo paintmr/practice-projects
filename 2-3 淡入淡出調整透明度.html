@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./jquery.mini.js"></script>
+    <style>
+      ul,
+      li {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+      }
+      ul {
+        width: 768px;
+        height: 273px;
+        margin: 30px auto;
+      }
+      li {
+        float: left;
+        margin-left: 10px;
+      }
+      li:hover {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <ul>
+      <li><img src="./images/2-3 pic1.jpg" alt="2-3 pic1.jpg" /></li>
+      <li><img src="./images/2-3 pic2.jpg" alt="2-3 pic2.jpg" /></li>
+      <li><img src="./images/2-3 pic3.jpg" alt="2-3 pic3.jpg" /></li>
+      <li><img src="./images/2-3 pic4.jpg" alt="2-3 pic4.jpg" /></li>
+    </ul>
+    <script>
+      $(function () {
+        // $("ul>li").mouseenter(function () {
+        //   $(this).siblings().stop().fadeTo(1000, 0.5);
+        // });
+        // $("ul>li").mouseleave(function () {
+        //   $(this).siblings().stop().fadeTo(1000, 1);
+        // });
+        // 上述代碼可改為
+        $("ul>li").hover(
+          function () {
+            $(this).siblings().stop().fadeTo(1000, 0.5);
+          },
+          function () {
+            $(this).siblings().stop().fadeTo(1000, 1);
+          }
+        );
+      });
+    </script>
+    <div></div>
+  </body>
+</html>

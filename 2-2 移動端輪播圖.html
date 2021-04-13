@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>2-2 移動端輪播圖</title>
     <style>
       body,
       div,
@@ -18,31 +18,23 @@
       }
       #carousel {
         position: relative;
-        width: 100%;
-        height: 500px;
-        margin: 30px auto;
-      }
-      .pic-wrap {
-        width: 100%;
-        height: 100%;
         overflow: hidden;
       }
       #pics {
-        position: absolute;
-        margin-left: -100%;
+        /* overflow: hidden; */
         width: 500%;
+        margin-left: -100%;
       }
       #pics li {
-        width: 20%;
         float: left;
+        width: 20%;
       }
       #pics img {
         width: 100%;
-        height: 500px;
       }
       #dots {
         position: absolute;
-        bottom: -30px;
+        bottom: 30px;
         left: 50%;
         transform: translateX(-50%);
       }
@@ -56,27 +48,33 @@
         cursor: pointer;
       }
       #dots .selected {
+        width: 40px;
         background-color: #ff6670;
+        border-radius: 30%;
+      }
+      .test {
+        width: 100px;
+        height: 100px;
+        background-color: aqua;
       }
     </style>
   </head>
   <body>
     <div id="carousel">
-      <div class="pic-wrap">
-        <ul id="pics">
-          <li>
-            <a href="#"><img src="./picm1.jpg" alt="" /></a>
-          </li>
-          <li>
-            <a href="#"><img src="./picm2.jpg" alt="" /></a>
-          </li>
-          <li>
-            <a href="#"><img src="./picm3.jpg" alt="" /></a>
-          </li>
-        </ul>
-      </div>
+      <ul id="pics">
+        <li>
+          <a href="#"><img src="./images/2-2 picm1.jpg" alt="" /></a>
+        </li>
+        <li>
+          <a href="#"><img src="./images/2-2 picm2.jpg" alt="" /></a>
+        </li>
+        <li>
+          <a href="#"><img src="./images/2-2 picm3.jpg" alt="" /></a>
+        </li>
+      </ul>
       <ul id="dots"></ul>
     </div>
+    <div class="test"></div>
     <script>
       var pics = document.querySelector("#pics");
       var dots = document.querySelector("#dots");
@@ -84,6 +82,8 @@
       var w = pics.children[0].offsetWidth;
       // 目前所顯示的圖片索引號
       var index = 0;
+      // 8-1 用於判斷用戶是否移動了手指,只有手指移動了，才把flag設為true
+      flag = false;
       // 1 自動生成下部按鈕
       for (let i = 0; i < pics.children.length; i++) {
         var li = document.createElement("li");
@@ -115,7 +115,8 @@
           pics.style.transform = "translateX(" + movePicsX + "px)";
         } //3-2-2 如果倒著走
         else if (index <= -1) {
-          index == dots.children.length - 1;
+          index = dots.children.length - 1;
+          pics.style.transition = "none";
           var movePicsX = -index * w;
           pics.style.transform = "translateX(" + movePicsX + "px)";
         }
@@ -136,16 +137,52 @@
         startX = e.targetTouches[0].pageX;
         // 只要開始拖動，就停止定時器
         clearInterval(timer);
+        e.preventDefault;
       });
       // 5-2 移動手指touchmove: 計算手指的滑動距離，並且移動盒子
       pics.addEventListener("touchmove", function (e) {
-        // 計算移動距離
+        // 計算手指移動距離
         moveX = e.targetTouches[0].pageX - startX;
         // 移動盒子：盒子後來的位置=盒子原來的位置+手指移動的距離
         var movePicsX = -index * w + moveX;
         //手指拖動的時候，不需要動畫效果，所以要取消過度效果
         pics.style.transition = "none";
         pics.style.transform = "translateX(" + movePicsX + "px)";
+        flag = true; //8-2 只有手指移動了，才把flag設為true
+        e.preventDefault(); // 取消默認行為，比如滾動屏幕
+      });
+      // 6 手指離開，根據移動距離判斷回彈還是播放上一張/下一張
+      pics.addEventListener("touchend", function (e) {
+        // 8-3 只有手指移動了，才把flag設為true，才去計算相應的移動距離
+        if (flag) {
+          // 6-1 如果移動距離大於50px，播放上一張/下一張
+          if (Math.abs(moveX) > 50) {
+            // moveX>0，為右滑，播放上一張
+            if (moveX > 0) {
+              index--;
+            } else {
+              // moveX<0，為左滑，播放下一張
+              index++;
+            }
+            // 用最新的index值獲得最新的pics的位置
+            var movePicsX = -index * w;
+            pics.style.transition = "all .3s";
+            pics.style.transform = "translateX(" + movePicsX + "px)";
+          } else {
+            // 6-2 如果移動距離小於50px，就回彈
+            var movePicsX = -index * w;
+            pics.style.transition = "all .1s";
+            pics.style.transform = "translateX(" + movePicsX + "px)";
+          }
+        }
+        // 7 手指離開屏幕就重新開啟定時器
+        clearInterval(timer);
+        timer = setInterval(function () {
+          index++;
+          var movePicsX = -index * w;
+          pics.style.transition = "all .3s";
+          pics.style.transform = "translateX(" + movePicsX + "px)";
+        }, 2000);
       });
     </script>
   </body>
