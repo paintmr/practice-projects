@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>手風琴</title>
+    <script src="./jquery.mini.js"></script>
+    <style>
+      ul,
+      li {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+      }
+      .accordion-wrap li {
+        float: left;
+        position: relative;
+        width: 69px;
+        height: 69px;
+      }
+      .accordion-wrap a img {
+        height: 69px;
+      }
+      .accordion-wrap a .sm-pic {
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+      .accordion-wrap a .big-pic {
+        display: none;
+      }
+      .accordion-wrap .current {
+        width: 224px;
+      }
+      .current a .sm-pic {
+        display: none;
+      }
+      .current a .big-pic {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="accordion-wrap">
+      <ul>
+        <li class="current">
+          <a href="#">
+            <img src="./images/2-4/c1.jpg" alt="c1" class="sm-pic" />
+            <img src="./images/2-4/c.png" alt="c" class="big-pic" />
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <img src="./images/2-4/h1.jpg" alt="h1" class="sm-pic" />
+            <img src="./images/2-4/h.png" alt="h" class="big-pic" />
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <img src="./images/2-4/l1.jpg" alt="l1" class="sm-pic" />
+            <img src="./images/2-4/l.png" alt="l" class="big-pic" />
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <img src="./images/2-4/m1.jpg" alt="m1" class="sm-pic" />
+            <img src="./images/2-4/m.png" alt="m" class="big-pic" />
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <img src="./images/2-4/w1.jpg" alt="w1" class="sm-pic" />
+            <img src="./images/2-4/w.png" alt="w" class="big-pic" />
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <img src="./images/2-4/z1.jpg" alt="z1" class="sm-pic" />
+            <img src="./images/2-4/z.png" alt="z" class="big-pic" />
+          </a>
+        </li>
+      </ul>
+    </div>
+    <script>
+      $(function () {
+        $(".accordion-wrap li").mouseenter(function () {
+          // 鼠標經過，當前li的寬度變為224px，裡面的小圖fadeOut，大圖fadeIn
+          $(this)
+            .stop()
+            .animate({ width: 224 }, "slow")
+            .find(".sm-pic")
+            .stop()
+            .fadeOut("slow")
+            .siblings()
+            .stop()
+            .fadeIn("slow");
+          // 當前li的siblings的li寬度變為69，裡面的小圖fadeIn，大圖fadeOut
+          $(this)
+            .siblings("li")
+            .stop()
+            .animate({ width: 69 }, "slow")
+            .find(".sm-pic")
+            .stop()
+            .fadeIn("slow")
+            .siblings()
+            .stop()
+            .fadeOut("slow");
+        });
+      });
+    </script>
+  </body>
+</html>
