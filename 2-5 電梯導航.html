@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./jquery.mini.js"></script>
+    <style>
+      ul,
+      li {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+      }
+      .top-nav {
+        width: 100%;
+        height: 200px;
+        margin-top: 10px;
+        background-color: #ff6670;
+      }
+      .banner {
+        width: 100%;
+        height: 300px;
+        margin-top: 10px;
+        background-color: #678f8d;
+      }
+      .main {
+        width: 100%;
+        height: 500px;
+        margin-top: 10px;
+      }
+      .c1 {
+        background-color: #ffd000;
+      }
+      .c2 {
+        background-color: #ff6670;
+      }
+      .c3 {
+        background-color: #678f8d;
+      }
+      .c4 {
+        background-color: #ffd000;
+      }
+      .c5 {
+        background-color: #ff6670;
+      }
+      footer {
+        width: 100%;
+        height: 600px;
+        margin-top: 10px;
+        background-color: #678f8d;
+      }
+      .elevator {
+        position: fixed;
+        display: none;
+        top: 100px;
+        left: 0;
+        background-color: azure;
+        text-align: center;
+      }
+      .elevator li {
+        width: 50px;
+      }
+      .elevator li:hover {
+        cursor: pointer;
+      }
+      .current {
+        background-color: #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-nav">top-nav</div>
+    <div class="banner">banner</div>
+    <div class="main c1">宫</div>
+    <div class="main c2">商</div>
+    <div class="main c3">角</div>
+    <div class="main c4">徵</div>
+    <div class="main c5">羽</div>
+    <footer>footer</footer>
+    <div class="elevator">
+      <ul>
+        <li class="current">宮</li>
+        <li>商</li>
+        <li>角</li>
+        <li>徵</li>
+        <li>羽</li>
+      </ul>
+    </div>
+    <script>
+      $(function () {
+        // 總共7-4步
+        // 7 bug：每次點擊電梯按鈕，比如從5樓到2樓，會觸發滾動事件，在滾動中，會依次把4樓和3樓的按鈕也點亮。解決方案：點擊電梯按鈕時，不需要執行滾動事件中的點亮電梯按鈕代碼。可以用節流閥（或者叫互斥鎖）。
+        var flag = true; //7-1
+        // 4 刷新頁面的時候，即便頁面滾動距離超過了banner距離頁面上部的距離，電梯按鈕也不會出現，所以這個時候要執行一下第2步，可以把第2步封裝成函數
+        function elevate() {
+          if ($(document).scrollTop() >= $(".banner").offset().top) {
+            // $(".elevator").show();或者
+            $(".elevator").fadeIn();
+          } else {
+            // $(".elevator").hide(); 或者
+            $(".elevator").fadeOut();
+          }
+        }
+        elevate();
+        // 1 頁面滾動事件
+        $(window).scroll(function () {
+          // 2 如果滾動的距離>=頁面距離頂端的距離，則顯示電梯按鈕；否則隱藏
+          elevate();
+          // 6 頁面滾動到相應區域，把相應區域的電梯按鈕加為current。
+          // 需要用到each，遍歷電梯樓層。each能拿到電梯樓層的每一個模塊和索引號
+          // 判斷條件：被卷去的頭部>=內容區裡面每個模塊的offset().top
+          // 7-2 這是第7步裡的節流閥，只有flag為true時，才執行後續的代碼
+          if (flag) {
+            $(".main").each(function (index, domEle) {
+              if ($(document).scrollTop() >= $(domEle).offset().top) {
+                $(".elevator li")
+                  .eq(index)
+                  .addClass("current")
+                  .siblings()
+                  .removeClass("current");
+              }
+            });
+          }
+        });
+        // 3 點擊相關的電梯按鈕，跳到相關的電梯層
+        $(".elevator li").click(function () {
+          // 7-3 每次點擊電梯按鈕，讓flag為false，這樣就不會執行滾動事件裡的點亮電梯按鈕的代碼了
+          flag = false;
+          // 拿到被點擊的電梯樓層號。
+          i = $(this).index();
+          // document被卷去的頭部=相應樓層的offset().top
+          var dScrollTop = $(".main").eq(i).offset().top;
+          // 頁面卷動
+          // 7-4 在動畫結束時，把flag改為true，以便等會滾動頁面的時候，可以點亮電梯按鈕
+          $("body,html")
+            .stop()
+            .animate(
+              {
+                scrollTop: dScrollTop,
+              },
+              function () {
+                flag = true;
+              }
+            );
+          // 5 把相應的電梯按鈕變成current，其它的電梯按鈕去掉current。鏈式編程
+          $(this).addClass("current").siblings().removeClass("current");
+        });
+      });
+    </script>
+  </body>
+</html>
