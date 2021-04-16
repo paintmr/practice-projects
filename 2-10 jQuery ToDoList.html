@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ToDoList</title>
+    <script src="./jquery.mini.js"></script>
+    <style>
+      ul,
+      li {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="todo-wrap">
+      請輸入待辦事項，回車添加待辦事項：<input type="text" id="todo" />
+      <br />
+      正在進行<span id="doing-count"></span>
+      <ul id="doing"></ul>
+      已經完成<span id="done-count"></span>
+      <ul id="done"></ul>
+    </div>
+    <script>
+      $(function () {
+        // 總共4步
+        // 1-7 每次頁面打開時，都從localStorage中讀取數據，把數據渲染到list中
+        load();
+        // 1(共7小條) 給todo輸入框綁定鍵盤抬起事件
+        $("#todo").on("keyup", function (e) {
+          // 1-1 如果抬起的鍵盤是13，則獲取輸入框裡的內容，存儲在本地，並且在doing list中顯示
+          if (e.keyCode === 13) {
+            if ($(this).val() === "") {
+              alert("輸入不能為空");
+            } else {
+              // 1-2 讀取本地存儲原來的數據（因為這個功能經常用到，所以寫個函數）
+              var local = getData();
+              // 1-3 更新local數組，把最新的數據追加給local數組
+              local.push({ title: $(this).val(), done: false });
+              // 1-4 把local存儲給localStorage（因為這個功能經常用到，所以寫個函數）
+              saveData(local);
+              // 1-5 渲染加載數據
+              load();
+              // 1-6 清空輸入框
+              $(this).val("");
+            }
+          }
+        });
+        // 1-2
+        function getData() {
+          var data = localStorage.getItem("todolist");
+          if (data !== null) {
+            // 本地存儲裡面的數據是字符串格式的，但我們需要的是對象格式的，所以要轉換
+            return JSON.parse(data);
+          } else {
+            return [];
+          }
+        }
+        //  1-4
+        function saveData(data) {
+          localStorage.setItem("todolist", JSON.stringify(data));
+        }
+        // 1-5
+        function load() {
+          var data = getData();
+          $("#doing, #done").empty();
+          // 4 統計doing和done的事件個數
+          // 4-1 設置2個list統計數值的初始值
+          var doingCount = 0;
+          var doneCount = 0;
+          $.each(data, function (i, n) {
+            // 2-2-1 給a加個id屬性，以備刪除的時候用
+            // 3-4-1 根據done的屬性來確定酒精把li渲染到哪個列表
+            if (n.done) {
+              $("#done").prepend(
+                "<li><input type='checkbox' checked='checked'/><span>" +
+                  n.title +
+                  "</span><a href='javascript:;'' id=" +
+                  i +
+                  ">刪除</a></li>"
+              );
+              doneCount++;
+            } else {
+              $("#doing").prepend(
+                "<li><input type='checkbox' /><span>" +
+                  n.title +
+                  "</span><a href='javascript:;'' id=" +
+                  i +
+                  ">刪除</a></li>"
+              );
+              doingCount++;
+            }
+          });
+          // 4-2 修改統計數值
+          $("#doing-count").text(doingCount);
+          $("#done-count").text(doneCount);
+        }
+        // 2（共4小條） doToList 刪除操作
+        $("#doing, #done").on("click", "a", function () {
+          // 2-1 獲取本地存儲
+          var data = getData();
+          // 2-2 修改數據
+          // 2-2-2 點了哪個a，就獲取哪個a的id
+          var id = $(this).attr("id");
+          data.splice(id, 1);
+          // 2-3 保存到本地存儲
+          saveData(data);
+          // 2-4 重新渲染頁面
+          load();
+        });
+        // 3 切換doing和done的狀態
+        $("#doing, #done").on("click", "input", function () {
+          // 3-1 獲取本地存儲的數據
+          var data = getData();
+          // 3-2 根據複選框的狀態修改數據
+          // 點擊CheckBox，拿到它sibling a 的id值
+          var id = $(this).siblings("a").attr("id");
+          data[id].done = $(this).prop("checked");
+          // 3-3 保存到本地存儲
+          saveData(data);
+          // 3-4 重新渲染頁面
+          load();
+        });
+      });
+    </script>
+  </body>
+</html>
