@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>面向對象tab欄切換</title>
+    <link rel="stylesheet" href="./css/Object-Oriented-Programming.css" />
+  </head>
+  <body>
+    <main>
+      <h4>JS 面向對象 動態添加標籤頁</h4>
+      <div class="tabsbox" id="tab">
+        <!-- tab 標籤 -->
+        <nav class="firstnav">
+          <ul>
+            <li class="liactive">
+              <span>測試1</span>
+              <span class="iconfont icon-guanbi"></span>
+            </li>
+            <li>
+              <span>測試2</span>
+              <span class="iconfont icon-guanbi"></span>
+            </li>
+            <li>
+              <span>測試3</span>
+              <span class="iconfont icon-guanbi"></span>
+            </li>
+          </ul>
+          <div class="tabadd">
+            <span>+</span>
+          </div>
+        </nav>
+        <!-- tab 內容 -->
+        <div class="tabscon">
+          <section class="conactive">測試1</section>
+          <section>測試2</section>
+          <section>測試3</section>
+        </div>
+      </div>
+    </main>
+    <script src="js/Object-Oriented-Programming.js"></script>
+  </body>
+</html>
