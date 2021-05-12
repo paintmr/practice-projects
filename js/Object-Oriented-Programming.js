@@ -21,6 +21,7 @@ class Tab {
       this.lis[i].onclick = this.toggleTab;
       this.remove[i].onclick = this.removeTab;
       this.spans[i].ondblclick = this.editTab;
+      this.sections[i].ondblclick = this.editTab;
     }
   }
   // 獲取所有的li,section和關閉按鈕
@@ -28,7 +29,7 @@ class Tab {
     this.lis = this.main.querySelectorAll('li');
     this.sections = this.main.querySelectorAll('section');
     this.remove = this.main.querySelectorAll('.icon-guanbi');
-    this.spans = this.main.querySelectorAll('.firstnav li span:first-child')
+    this.spans = this.main.querySelectorAll('.firstnav li span:first-child');
   }
   // 1 切換
   toggleTab() {
@@ -82,9 +83,25 @@ class Tab {
   }
   // 4 修改
   editTab() {
+    var str = this.innerHTML;
+    console.log(str);
     // 禁止雙擊選定文字
     window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
     this.innerHTML = '<input type = "text" />'
+    var input = this.children[0];
+    input.value = str;
+    input.select(); //讓文本框裡的文字處於選定狀態
+    // 離開文本框時，把文本框裡的值給span
+    input.onblur = function () {
+      this.parentNode.innerHTML = this.value;
+    }
+    // 按下回車也可以把文本框裡面的值給span
+    input.onkeyup = function (e) {
+      if (e.keyCode === 13) {
+        // 手動調用表單失去焦點時間，不需要鼠標離開操作
+        this.blur();
+      }
+    }
   }
 }
 new Tab('#tab');
