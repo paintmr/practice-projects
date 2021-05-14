@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>查詢商品案例</title>
+    <style>
+      .search {
+        width: 600px;
+        margin: 20px auto;
+      }
+      input {
+        width: 50px;
+      }
+      table {
+        width: 400px;
+        border: 1px solid #000;
+        border-collapse: collapse;
+        margin: 0 auto;
+      }
+      td,
+      th {
+        border: 1px solid #000;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="search">
+      按照價格查詢：
+      <input type="text" class="start" />
+      -
+      <input type="text" class="end" />
+      <button class="search-price">查詢</button>
+      按照商品名稱查詢：
+      <input type="text" class="product" />
+      <button class="search-pro">查詢</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>產品名稱</th>
+          <th>價格</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- <tr>
+          <td>1</td>
+          <td>小米</td>
+          <td>3999</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>oppo</td>
+          <td>999</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>榮耀</td>
+          <td>1299</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>華為</td>
+          <td>1999</td>
+        </tr> -->
+      </tbody>
+    </table>
+    <script>
+      // 利用新增数组方法操作数据
+      var data = [
+        {
+          id: 1,
+          pname: "小米",
+          price: 3999,
+        },
+        {
+          id: 2,
+          pname: "oppo",
+          price: 999,
+        },
+        {
+          id: 3,
+          pname: "荣耀",
+          price: 1299,
+        },
+        {
+          id: 4,
+          pname: "华为",
+          price: 1999,
+        },
+      ];
+      // 1 獲取相應的元素
+      var tbody = document.querySelector("tbody");
+      var search_price = document.querySelector(".search-price");
+      var start = document.querySelector(".start");
+      var end = document.querySelector(".end");
+      var product = document.querySelector(".product");
+      var search_pro = document.querySelector(".search-pro");
+      // 2 把數據渲染到頁面中
+      setData(data);
+      function setData(data) {
+        // 先清空原來tbody裡面的數據
+        tbody.innerHTML = "";
+        data.forEach(function (value) {
+          var tr = document.createElement("tr");
+          tr.innerHTML =
+            "<td>" +
+            value.id +
+            "</td><td>" +
+            value.pname +
+            "</td><td>" +
+            value.price +
+            "</td>";
+          tbody.appendChild(tr);
+        });
+      }
+      // 3 根據價格查詢商品
+      // 點擊按鈕，根據商品價格篩選數組裡的對象
+      search_price.addEventListener("click", function () {
+        var newData = data.filter(function (value) {
+          return value.price >= start.value && value.price <= end.value;
+        });
+        setData(newData);
+      });
+      // 4 根據商品名稱查找商品
+      // 如果查詢數組中唯一的元素，用some方法更合適，因為它找到這個元素，就不再進行循環，效率更高
+      search_pro.addEventListener("click", function () {
+        var arr = [];
+        data.some(function (value) {
+          if (value.pname === product.value) {
+            arr.push(value);
+            return true;
+          }
+        });
+        // 把數據渲染到頁面中
+        setData(arr);
+      });
+    </script>
+  </body>
+</html>
