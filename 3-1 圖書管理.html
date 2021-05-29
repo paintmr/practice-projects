@@ -76,10 +76,10 @@
           <th>操作</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
+      <tbody id="bookBody">
+        <!-- <tr>
           <td></td>
-        </tr>
+        </tr> -->
       </tbody>
     </table>
 
@@ -95,5 +95,83 @@
       integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
       crossorigin="anonymous"
     ></script>
+    <script>
+      // 获取图书列表
+      function getBookList() {
+        // 1 发起Ajax请求获取图书列表数据
+        $.get("http://www.liulongbin.top:3006/api/getbooks", function (res) {
+          // 2 获取列表数据是否成功
+          if (res.status !== 200) return alert("获取图书列表失败TT");
+          // 3 渲染页面结构
+          var rows = [];
+          //4 循环拼接字符串
+          $.each(res.data, function (i, item) {
+            rows.push(
+              "<tr><td>" +
+                item.id +
+                "</td><td>" +
+                item.bookname +
+                "</td><td>" +
+                item.author +
+                "</td><td>" +
+                item.publisher +
+                '</td><td><a href="javascript:;" class="del" data-id="' +
+                item.id +
+                '">删除</a></td></tr>'
+            );
+          });
+          // 5 渲染表格结构
+          $("#bookBody").empty().append(rows.join(""));
+        });
+      }
+      getBookList();
+
+      // 删除某本图书
+      // 后期被append追加的元素，无法通过下面的方法绑定事件。解决方案：为a的父级元素tbody绑定事件，作为a元素的代理。
+      // $(".del").on("click", function () {
+      //   console.log("ok");
+      // });
+      $("tbody").on("click", ".del", function () {
+        var id = $(this).attr("data-id");
+        $.get(
+          "http://www.liulongbin.top:3006/api/delbook",
+          { id: id },
+          function (res) {
+            if (res.status !== 200) return alert("删除图书失败TT");
+            getBookList();
+          }
+        );
+      });
+
+      // 添加图书
+      $("#btnAdd").on("click", function () {
+        // 1 检测内容是否为空
+        var bookname = $("#iptBookName").val().trim();
+        var author = $("#iptAuthor").val().trim();
+        var publisher = $("#iptPublisher").val().trim();
+        if (
+          bookname.length == 0 ||
+          author.length == 0 ||
+          publisher.length == 0
+        ) {
+          return alert("请完整填写图书信息");
+        }
+        $.post(
+          "http://www.liulongbin.top:3006/api/addbook",
+          {
+            bookname: bookname,
+            author: author,
+            publisher: publisher,
+          },
+          function (res) {
+            if (res.status !== 201) return alert("添加图书失败");
+            getBookList();
+            $("#iptBookName").val("");
+            $("#iptAuthor").val("");
+            $("#iptPublisher").val("");
+          }
+        );
+      });
+    </script>
   </body>
 </html>
