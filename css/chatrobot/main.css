@@ -109,7 +109,7 @@ body {
   top: 3px;
   width: 13px;
   height: 12px;
-  background: url("../img/corner02.png") no-repeat;
+  background: url("../../images/chatrobot/corner02.png") no-repeat;
 }
 .drag_bar {
   position: absolute;
