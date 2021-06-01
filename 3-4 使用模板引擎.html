@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>使用模板引擎</title>
+    <!-- 1 導入模板引擎 -->
+    <!-- 在window全局,多一個函數,叫做template('模板的ID'，需要渲染的數據對象) -->
+    <script src="./js/art-template.js"></script>
+    <script src="./jquery.mini.js"></script>
+  </head>
+  <body>
+    <div id="container"></div>
+
+    <!-- 3 定義模板。模板的HTML結構，必須定義到script中。並且寫明type="text/html"，表示把script標籤裡面的代碼當成HTML代碼去執行。否則默認的是<script type=”text/javascript”></script>。意思是把這個script標籤裡面所有的值都當做JavaScript代碼去執行。-->
+    <script type="text/html" id="tpl-user">
+      <!-- 標準語法，輸出 -->
+      <h1>{{name}} ------ {{age}}</h1>
+      <!-- 標準語法，原文輸出 -->
+      {{@ test}}
+      <!-- 標準語法，條件輸出 -->
+      <div>
+        {{if flag === 0}} flag為0 {{else if flag === 1}} flag為1 {{/if}}
+      </div>
+      <!-- 標準語法，循環輸出 -->
+      <ul>
+        {{each hobby}}
+        <li>索引是{{$index}}，循環項是{{$value}}</li>
+        {{/each}}
+      </ul>
+      <!-- 標準語法，過濾器 -->
+      <h3>{{regTime | dateFormat}}</h3>
+    </script>
+
+    <script>
+      // 處理時間的過濾器
+      template.defaults.imports.dateFormat = function (date) {
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        var d = date.getDate();
+        return y + "-" + m + "-" + d;
+      };
+
+      // 2 定義需要渲染的數據
+      var data = {
+        name: "江心月",
+        age: 20,
+        test: "<h3>测试art-template原文输出</h3>",
+        flag: 0,
+        hobby: ["讀書", "旅行", "写代码"],
+        regTime: new Date(),
+      };
+
+      // 4 調用template函數
+      var htmlStr = template("tpl-user", data);
+      console.log(htmlStr);
+      // 5 渲染HTML結構
+      $("#container").html(htmlStr);
+    </script>
+  </body>
+</html>
