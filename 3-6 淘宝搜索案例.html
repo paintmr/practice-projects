@@ -1,34 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>淘寶搜索案例</title>
-  <!-- 導入頁面基本樣式 -->
-  <link rel="stylesheet" href="./css/taobao-search.css">
-  <!-- 導入jQuery -->
-  <script src="./jquery.mini.js"></script>
-  <!-- 導入JavaScript文件 -->
-  <script src="./js/taobao-search.js"></script>
-</head>
-<body>
-  <div class="container">
-    <!-- logo -->
-    <img src="./images/taobao_logo.png" alt="logo" class="logo">
-    <div class="box">
-      <!-- tab 栏 -->
-      <div class="tabs">
-        <div class="tab-active">宝贝</div>
-        <div>店铺</div>
-      </div>
-      <!-- 搜索区域（搜索框和搜索按钮） -->
-      <div class="search-box">
-        <input type="text" id='ipt' class="ipt" placeholder="请输入要搜索的内容" /><button class="btnSearch">
-          搜索
-        </button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>淘寶搜索案例</title>
+    <!-- 導入頁面基本樣式 -->
+    <link rel="stylesheet" href="./css/taobao-search.css" />
+    <!-- 導入jQuery -->
+    <script src="./jquery.mini.js"></script>
+    <!-- 導入模板引擎 -->
+    <script src="./js/art-template.js"></script>
+    <!-- 導入JavaScript文件 -->
+    <script src="./js/taobao-search.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <!-- logo -->
+      <img src="./images/taobao_logo.png" alt="logo" class="logo" />
+      <div class="box">
+        <!-- tab 栏 -->
+        <div class="tabs">
+          <div class="tab-active">宝贝</div>
+          <div>店铺</div>
+        </div>
+        <!-- 搜索区域（搜索框和搜索按钮） -->
+        <div class="search-box">
+          <input
+            type="text"
+            id="ipt"
+            class="ipt"
+            placeholder="请输入要搜索的内容"
+          /><button class="btnSearch">搜索</button>
+        </div>
+        <!-- 搜索建议列表 -->
+        <div id="suggest-list"></div>
       </div>
     </div>
-  </div>
-</body>
+
+    <!-- 定義模板結構 -->
+    <script type="text/html" id="tpl-suggestList">
+      {{each result}}
+      <!-- 搜索建議項 -->
+      <div class="suggest-item">{{$value[0]}}</div>
+      {{/each}}
+    </script>
+  </body>
 </html>

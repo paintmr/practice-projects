@@ -72,3 +72,18 @@
 .btnSearch:hover {
   opacity: 0.9;
 }
+
+#suggest-list {
+  border: 1px solid #ccc;
+  display: none;
+}
+
+.suggest-item {
+  line-height: 30px;
+  padding-left: 5px;
+}
+
+.suggest-item:hover {
+  cursor: pointer;
+  background-color: #eee;
+}
