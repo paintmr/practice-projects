@@ -1,14 +1,23 @@
 $(function () {
   // 為輸入綁定keyup事件
   $('#ipt').on('keyup', function () {
+    clearTimeout(timer);
     var keywords = $(this).val().trim();
     if (keywords.length <= 0) {
       // return;
       // 如果關鍵詞為空，清空後隱藏搜索建議列表
       return $('#suggest-list').empty().hide();
     }
+
     // 獲取搜索建議列表 
-    getSuggestList(keywords);
+
+    // 先判斷緩存中是否有數據
+    if (cacheObj[keywords]) {
+      return renderSuggestList(cacheObj[keywords])
+    }
+
+    // getSuggestList(keywords);
+    debounceSearch(keywords)
   })
 
   // 封裝getSuggestList函數
@@ -35,8 +44,25 @@ $(function () {
     // 渲染模板結構
     var htmlStr = template('tpl-suggestList', res)
     $('#suggest-list').html(htmlStr).show()
+
+    // 緩存
+    // 獲取用戶輸入的內容，作為鍵
+    var k = $('#ipt').val().trim();
+    // 需要將數據作為值，進行緩存
+    cacheObj[k] = res;
   }
 
+  // 定義延時器的id 
+  var timer = null
+  // 定義防抖的函數 
+  function debounceSearch(kw) {
+    timer = setTimeout(function () {
+      getSuggestList(kw)
+    }, 500)
+  }
+
+  // 定義全局緩存對象
+  var cacheObj = {}
 
 })
 
