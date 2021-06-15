@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>節流案例-鼠標跟隨</title>
+    <script src="./jquery.mini.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      #angel {
+        position: absolute;
+      }
+    </style>
+  </head>
+  <body>
+    <img src="./images/3-7 angel.gif" alt="angel" id="angel" />
+  </body>
+  <script>
+    // 1-1 獲取圖片元素
+    var angel = $("#angel");
+    // 2-1 定義節流閥
+    var timer = null;
+    // 1-2 監聽文檔的mousemove事件
+    $(document).on("mousemove", function (e) {
+      // 2-4 判斷節流閥是否為空
+      if (timer) {
+        return;
+      }
+      // 2-2 開啟延時器
+      timer = setTimeout(function () {
+        // 1-3 設置圖片的位置
+        $(angel)
+          .css("left", e.pageX + "px")
+          .css("top", e.pageY + "px");
+        // 2-3 重置延時器
+        timer = null;
+      }, 16);
+    });
+  </script>
+</html>
