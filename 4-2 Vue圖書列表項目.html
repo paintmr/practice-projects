@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>4-2 Vue圖書列表項目</title>
+    <style type="text/css">
+      .grid {
+        margin: auto;
+        width: 500px;
+        text-align: center;
+      }
+      .grid input {
+        width: 130px;
+      }
+      .grid table {
+        margin-top: 20px;
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .grid th,
+      td {
+        padding: 10px;
+        border: 1px dashed orange;
+        height: 35px;
+        line-height: 35px;
+      }
+      .grid th {
+        background-color: orange;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="grid">
+        <div>
+          <h1>圖書管理</h1>
+          <div class="book">
+            <div>
+              <label for="id">編號：</label>
+              <input type="text" id="id" v-model="id" />
+              <label for="name">名稱：</label>
+              <input type="text" id="name" v-model="name" />
+              <button @click="addBook">增加圖書</button>
+            </div>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>編號</th>
+              <th>名稱</th>
+              <th>時間</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :key="item.id" v-for="item in books">
+              <td>{{item.id}}</td>
+              <td>{{item.name}}</td>
+              <td>{{item.date}}</td>
+              <td>
+                <a href="" @click.prevent>修改</a>
+                <span> | </span>
+                <a href="" @click.prevent>刪除</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script type="text/javascript">
+      var vm = new Vue({
+        el: "#app",
+        data: {
+          id: "",
+          name: "",
+          books: [
+            {
+              id: 1,
+              name: "三國演義",
+              date: "",
+            },
+            {
+              id: 2,
+              name: "水滸傳",
+              date: "",
+            },
+            {
+              id: 3,
+              name: "紅樓夢",
+              date: "",
+            },
+            {
+              id: 4,
+              name: "西遊記",
+              date: "",
+            },
+          ],
+        },
+        methods: {
+          addBook: function () {
+            // 添加圖書
+            var book = {};
+            book.id = this.id;
+            book.name = this.name;
+            book.date = "";
+            this.books.push(book);
+            // 清空表單
+            this.id = "";
+            this.name = "";
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
