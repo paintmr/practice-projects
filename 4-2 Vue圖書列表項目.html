@@ -15,19 +15,25 @@
         width: 130px;
       }
       .grid table {
-        margin-top: 20px;
+        margin-top: 15px;
         width: 100%;
         border-collapse: collapse;
       }
       .grid th,
       td {
         padding: 10px;
-        border: 1px dashed orange;
+        border: 1px dashed #678f8d;
         height: 35px;
         line-height: 35px;
       }
       .grid th {
-        background-color: orange;
+        background-color: #678f8d;
+      }
+      .grid .total {
+        margin-top: 15px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
       }
     </style>
   </head>
@@ -39,13 +45,22 @@
           <div class="book">
             <div>
               <label for="id">編號：</label>
-              <input type="text" id="id" v-model="id" />
+              <input
+                type="text"
+                id="id"
+                v-model="id"
+                :disabled="flag"
+                v-focus
+              />
               <label for="name">名稱：</label>
-              <input type="text" id="name" v-model="name" />
-              <button @click="addBook">增加圖書</button>
+              <input type="text" id="name" v-model.lazy="name" />
+              <button @click="addBook" :disabled="submitFlag">
+                提交圖書信息
+              </button>
             </div>
           </div>
         </div>
+        <div class="total">共計 <span>{{total}}</span> 本書</div>
         <table>
           <thead>
             <tr>
@@ -59,11 +74,11 @@
             <tr :key="item.id" v-for="item in books">
               <td>{{item.id}}</td>
               <td>{{item.name}}</td>
-              <td>{{item.date}}</td>
+              <td>{{item.date | format('yyyy-MM-dd hh:mm:ss')}}</td>
               <td>
-                <a href="" @click.prevent>修改</a>
+                <a href="" @click.prevent="forEditBook(item.id)">修改</a>
                 <span> | </span>
-                <a href="" @click.prevent>刪除</a>
+                <a href="" @click.prevent="deleteBook(item.id)">刪除</a>
               </td>
             </tr>
           </tbody>
@@ -72,46 +87,177 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script type="text/javascript">
+      Vue.directive("focus", {
+        inserted: function (el) {
+          //獲取元素的焦點
+          // el表示指令綁定的元素
+          el.focus();
+        },
+      });
+
+      // 時間格式過濾器
+      Vue.filter("format", function (value, arg) {
+        function dateFormat(date, format) {
+          if (typeof date === "string") {
+            var mts = date.match(/(\/Date\((\d+)\)\/)/);
+            if (mts && mts.length >= 3) {
+              date = parseInt(mts[2]);
+            }
+          }
+          date = new Date(date);
+          if (!date || date.toUTCString() == "Invalid Date") {
+            return "";
+          }
+          var map = {
+            M: date.getMonth() + 1, //月份
+            d: date.getDate(), //日
+            h: date.getHours(), //小时
+            m: date.getMinutes(), //分
+            s: date.getSeconds(), //秒
+            q: Math.floor((date.getMonth() + 3) / 3), //季度
+            S: date.getMilliseconds(), //毫秒
+          };
+          format = format.replace(/([yMdhmsqS])+/g, function (all, t) {
+            var v = map[t];
+            if (v !== undefined) {
+              if (all.length > 1) {
+                v = "0" + v;
+                v = v.substr(v.length - 2);
+              }
+              return v;
+            } else if (t === "y") {
+              return (date.getFullYear() + "").substr(4 - all.length);
+            }
+            return all;
+          });
+          return format;
+        }
+        return dateFormat(value, arg);
+      });
+
       var vm = new Vue({
         el: "#app",
         data: {
           id: "",
           name: "",
-          books: [
-            {
-              id: 1,
-              name: "三國演義",
-              date: "",
-            },
-            {
-              id: 2,
-              name: "水滸傳",
-              date: "",
-            },
-            {
-              id: 3,
-              name: "紅樓夢",
-              date: "",
-            },
-            {
-              id: 4,
-              name: "西遊記",
-              date: "",
-            },
-          ],
+          flag: false,
+          submitFlag: false,
+          books: [],
         },
         methods: {
           addBook: function () {
-            // 添加圖書
-            var book = {};
-            book.id = this.id;
-            book.name = this.name;
-            book.date = "";
-            this.books.push(book);
+            if (this.flag) {
+              // 編輯圖書
+              // 箭頭函數中的this指的是定義這個函數的父級作用域中（這裡是addBook的作用域）的this（addBook中的this指向的是Vue實例），而普通函數會指向window，所以這裡要用箭頭函數
+              this.books.some((item) => {
+                if (item.id === this.id) {
+                  item.name = this.name;
+                  this.flag = false;
+                  // 完成更新操作後，即可終止循環，以提高性能。
+                  return true;
+                }
+              });
+            } else {
+              // 添加圖書
+              var book = {};
+              book.id = this.id;
+              book.name = this.name;
+              book.date = 1629613975919;
+              this.books.push(book);
+            }
             // 清空表單
             this.id = "";
             this.name = "";
           },
+          forEditBook: function (id) {
+            // console.log(id);
+            // 根据id查询出要编辑的数据
+            var book = this.books.filter(function (item) {
+              return item.id === id;
+            });
+            // console.log(book);
+            // 把获取到的信息填充到表单
+            this.id = book[0].id;
+            // 禁止修改id
+            this.flag = true;
+            this.name = book[0].name;
+            var date = new Date().getTime();
+          },
+          deleteBook: function (id) {
+            // 刪除圖書
+            // ——————————————————
+            // 方法1
+            // (1)根据id查询出要刪除的数据
+            // var index = this.books.findIndex(function (item) {
+            //   return item.id === id;
+            // });
+            // (2)根據索引刪除數組元素
+            // this.books.splice(index, 1);
+            // ——————————————————
+            // 方法2
+            this.books = this.books.filter(function (item) {
+              return item.id != id;
+            });
+          },
+        },
+        computed: {
+          total: function () {
+            // 計算圖書的總數
+            return this.books.length;
+          },
+        },
+        watch: {
+          id: function (val) {
+            var flag = this.books.some(function (item) {
+              return item.id == val;
+            });
+            if (flag) {
+              // 圖書存在
+              this.submitFlag = true;
+            } else {
+              // 圖書名不存在
+              this.submitFlag = false;
+            }
+          },
+          name: function (val) {
+            var flag = this.books.some(function (item) {
+              return item.name == val;
+            });
+            if (flag) {
+              // 圖書存在
+              this.submitFlag = true;
+            } else {
+              // 圖書名不存在
+              this.submitFlag = false;
+            }
+          },
+        },
+        mounted: function () {
+          // 該聲明週期狗子函數被觸發的時候，模板已經可以使用。一般此時用於獲取後台數據，然後把數據填充到模板
+          // 假設data是從後台拿到的數據
+          var data = [
+            {
+              id: 1,
+              name: "三國演義",
+              date: 1629613975919,
+            },
+            {
+              id: 2,
+              name: "水滸傳",
+              date: 1629613975919,
+            },
+            {
+              id: 3,
+              name: "紅樓夢",
+              date: 1629613975919,
+            },
+            {
+              id: 4,
+              name: "西遊記",
+              date: 1629613975919,
+            },
+          ];
+          this.books = data;
         },
       });
     </script>
