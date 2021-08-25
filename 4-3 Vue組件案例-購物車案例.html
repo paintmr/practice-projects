@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>4-3 Vue組件案例-購物車案例</title>
+    <style type="text/css">
+      .container .cart {
+        width: 300px;
+        margin: auto;
+      }
+      .container .title {
+        background-color: #355d81;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        color: #fff;
+        font-weight: bold;
+      }
+      .container .total {
+        background-color: #355d81;
+        height: 50px;
+        line-height: 50px;
+        text-align: right;
+      }
+      .container .total button {
+        margin: 0 10px;
+        background-color: #f3717d;
+        height: 35px;
+        width: 80px;
+        border: 0;
+        color: #fff;
+        font-weight: bold;
+      }
+      .container .total span {
+        color: #fff;
+        font-weight: bold;
+      }
+      .container .item {
+        height: 55px;
+        line-height: 55px;
+        position: relative;
+        border-top: 1px solid #355d81;
+      }
+      .container .item img {
+        width: 45px;
+        height: 45px;
+        margin: 5px;
+      }
+      .container .item .name {
+        position: absolute;
+        width: 90px;
+        top: 0;
+        left: 55px;
+        font-size: 16px;
+      }
+      .container .item .change {
+        width: 150px;
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+      .container .item .change a {
+        width: 25px;
+        height: 30px;
+        display: inline-block;
+        font-size: 25px;
+        line-height: 30px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #355d81;
+        vertical-align: middle;
+        color: #fff;
+        font-weight: bold;
+      }
+      .container .item .change .num {
+        width: 40px;
+        height: 25px;
+      }
+      .container .item .del {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 40px;
+        text-align: center;
+        font-size: 40px;
+        cursor: pointer;
+        color: #f3717d;
+      }
+      .container .item .del:hover {
+        background-color: #f3717d;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+        <my-cart></my-cart>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script type="text/javascript">
+      var CartTitle = {
+        props: ["uname"],
+        template: `
+          <div class="title">{{uname}}的商品</div>
+        `,
+      };
+      var CartList = {
+        props: ["list"],
+        template: `
+          <div>
+            <div :key="item.id" v-for="item in list" class="item">
+              <img :src="item.img" alt="">
+              <div class="name">{{item.name}}</div>
+              <div class="change">
+                <a href="" @click.prevent='sub(item.id)'>-</a>
+                <input type="text" class="num" @blur='changeNum(item.id, $event)' :value="item.num">
+                <a href="" @click.prevent='add(item.id)'>+</a>
+              </div>
+              <div class="del" @click='del(item.id)'>×</div>
+            </div>
+          </div>
+        `,
+        methods: {
+          changeNum: function (id, event) {
+            // console.log(id, event.target.value);
+            this.$emit("change-num", {
+              id: id,
+              type: "change",
+              num: parseInt(event.target.value),
+            });
+          },
+          sub: function (id) {
+            this.$emit("change-num", {
+              id: id,
+              type: "sub",
+            });
+          },
+          add: function (id) {
+            this.$emit("change-num", {
+              id: id,
+              type: "add",
+            });
+          },
+          del: function (id) {
+            // console.log(id);
+            // 不推薦在子組件中有刪除操作，最好讓父組件來操作
+            this.$emit("cart-del", id);
+          },
+        },
+      };
+      var CartTotal = {
+        props: ["list"],
+        template: `
+          <div class="total">
+            <span>總價：{{total}}</span>
+            <button>結算</button>
+          </div>
+        `,
+        computed: {
+          total: function () {
+            // 計算商品的總價
+            var t = 0;
+            this.list.forEach((item) => {
+              t += item.price * item.num;
+            });
+            return t;
+          },
+        },
+      };
+      Vue.component("my-cart", {
+        data: function () {
+          return {
+            uname: "張三",
+            list: [
+              {
+                id: 1,
+                name: "TCL彩电",
+                price: 1000,
+                num: 1,
+                img: "./images/4-3/a.jpg",
+              },
+              {
+                id: 2,
+                name: "机顶盒",
+                price: 1000,
+                num: 1,
+                img: "./images/4-3/b.jpg",
+              },
+              {
+                id: 3,
+                name: "海尔冰箱",
+                price: 1000,
+                num: 1,
+                img: "./images/4-3/c.jpg",
+              },
+              {
+                id: 4,
+                name: "小米手机",
+                price: 1000,
+                num: 1,
+                img: "./images/4-3/d.jpg",
+              },
+              {
+                id: 5,
+                name: "PPTV电视",
+                price: 1000,
+                num: 2,
+                img: "./images/4-3/e.jpg",
+              },
+            ],
+          };
+        },
+        template: `
+          <div class="cart">
+            <cart-title :uname='uname'></cart-title>
+            <cart-list :list='list' @change-num='changeNum($event)' @cart-del='delCart($event)'></cart-list>
+            <cart-total :list='list'></cart-total>
+          </div>
+        `,
+        components: {
+          "cart-title": CartTitle,
+          "cart-list": CartList,
+          "cart-total": CartTotal,
+        },
+        methods: {
+          changeNum: function (val) {
+            // console.log(val);
+            // 根據子組件傳遞過來的數據，更新list中對應的數據
+            // 分為三種情況：輸入變更，加號變更，減號變更
+            if (val.type === "change") {
+              this.list.some((item) => {
+                if (item.id === val.id) {
+                  item.num = val.num;
+                  // 終止遍歷
+                  return true;
+                }
+              });
+            } else if (val.type === "sub") {
+              // 減一操作
+              this.list.some((item) => {
+                if (item.id === val.id) {
+                  item.num -= 1;
+                  // 終止遍歷
+                  return true;
+                }
+              });
+            } else if (val.type === "add") {
+              // 加一操作
+              this.list.some((item) => {
+                if (item.id === val.id) {
+                  item.num += 1;
+                  // 終止遍歷
+                  return true;
+                }
+              });
+            }
+          },
+          delCart: function (id) {
+            // 根據id刪除list中對應的數據
+            // 1 找到id對應的索引
+            var index = this.list.findIndex((item) => {
+              return item.id === id;
+            });
+            // 2 根據索引刪除對應數據
+            this.list.splice(index, 1);
+          },
+        },
+      });
+      var vm = new Vue({
+        el: "#app",
+        data: {},
+      });
+    </script>
+  </body>
+</html>
