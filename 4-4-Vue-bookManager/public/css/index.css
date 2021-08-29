@@ -1,0 +1,37 @@
+.grid {
+  margin: auto;
+  width: 500px;
+  text-align: center;
+}
+.grid input {
+  width: 130px;
+}
+.grid table {
+  margin-top: 15px;
+  width: 100%;
+  border-collapse: collapse;
+}
+.grid th,
+td {
+  padding: 10px;
+  border: 1px dashed #678f8d;
+  height: 35px;
+  line-height: 35px;
+}
+.grid th {
+  background-color: #678f8d;
+}
+.grid .total {
+  margin-top: 15px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
