@@ -12,20 +12,6 @@ let maxBookCode = () => {
 }
 
 // 把內存數據寫入文件
-// let writeDataToFile = (res) => {
-//   fs.writeFile(path.join(__dirname, 'data.json'), JSON.stringify(data, null, 4), (err) => {
-//     console.log('writeToFile')
-//     if (err) {
-//       res.json({
-//         status: 500
-//       })
-//     }
-//     res.json({
-//       status: 200
-//     })
-
-//   })
-// }
 let writeDataToFile = (res) => {
   fs.writeFile(path.join(__dirname, 'data.json'), JSON.stringify(data, null, 4), (err) => {
     if (err) {
@@ -54,13 +40,16 @@ exports.checkId = (req, res) => {
       return true;
     }
   })
+  let maxId = maxBookCode() + 1;
   if (flag) {
     res.json({
-      status: 1
+      status: 1,
+      maxId
     })
   } else {
     res.json({
-      status: 2
+      status: 2,
+      maxId
     })
   }
 }
@@ -90,7 +79,6 @@ exports.checkName = (req, res) => {
 exports.addBook = (req, res) => {
   // 獲取表單數據
   let info = req.body;
-  console.log(info)
   let book = {};
   for (let key in info) {
     book[key] = info[key];
@@ -103,5 +91,35 @@ exports.addBook = (req, res) => {
   book.date = new Date().getTime();
   data.push(book);
   // 把內存中的數據寫入文件
+  writeDataToFile(res);
+}
+
+// 把修改後的圖書信息放入data中
+exports.editBook = (req, res) => {
+  let info = req.body;
+  info.date = new Date().getTime();
+  data.some((item) => {
+    if (info.id == item.id) {
+      for (let key in info) {
+        item[key] = info[key];
+      }
+      return true;
+    }
+  })
+  // 把内存中的数据写入文件
+  writeDataToFile(res);
+}
+
+// 根據id刪除圖書
+exports.deleteBook = (req, res) => {
+  let id = req.params.id;
+  data.some((item, index) => {
+    if (id == item.id) {
+      // 刪除數組的一項數據
+      data.splice(index, 1);
+      return true;
+    }
+  })
+  // 把內存中的數據寫入文件夾
   writeDataToFile(res);
 }

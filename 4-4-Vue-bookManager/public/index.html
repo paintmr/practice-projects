@@ -23,7 +23,7 @@
                 v-focus
               />
               <label for="name">名稱：</label>
-              <input type="text" id="name" v-model.lazy="name" />
+              <input type="text" id="name" v-model="name" />
               <button @click="addBook" :disabled="submitFlag">
                 提交圖書信息
               </button>
@@ -131,6 +131,9 @@
           flag: false, //如果flag為true，屬於編輯圖書；flag為false，屬於添加新圖書
           submitFlag: false,
           books: [],
+          maxId: "",
+          idSubmitFlag: false,
+          nameSubmitFlag: false,
         },
         methods: {
           queryData: async function () {
@@ -138,38 +141,40 @@
             this.books = data;
           },
           addBook: async function () {
+            if (this.name.trim().length == 0) {
+              alert("書籍名稱不能為空");
+              return;
+            }
+            // 如果this.flag為true，則是禁止修改id，意味著此時為編輯圖書信息狀態
             if (this.flag) {
               // 編輯圖書
-              // 箭頭函數中的this指的是定義這個函數的父級作用域中（這裡是addBook的作用域）的this（addBook中的this指向的是Vue實例），而普通函數會指向window，所以這裡要用箭頭函數
-              this.books.some((item) => {
-                if (item.id === this.id) {
-                  item.name = this.name;
-                  this.flag = false;
-                  // 完成更新操作後，即可終止循環，以提高性能。
-                  return true;
-                }
+              var data = await axios.put("books/bookId/" + this.id, {
+                name: this.name,
+                id: this.id,
               });
+              this.flag = false;
             } else {
-              // 添加圖書
+              // 添加新圖書
               // 如果用戶沒有寫圖書id，就只發送圖書name
-              if (this.name.trim().length == 0) {
-                alert("書籍名稱不能為空");
-                return;
-              }
               if (this.id.length == 0) {
-                var res = await axios.post("books", {
+                var data = await axios.post("books", {
                   name: this.name,
                 });
               } else {
-                var res = await axios.post("books", {
+                if (this.id > this.maxId) {
+                  alert("圖書編號必須≤" + this.maxId);
+                  this.id = "";
+                  return;
+                }
+                var data = await axios.post("books", {
                   name: this.name,
                   id: this.id,
                 });
               }
-              // 如果res.status ==200，表示把數據成功寫入了後台的json文件裡
-              if (res.status == 200) {
-                this.queryData();
-              }
+            }
+            // 如果data.status ==200，表示把數據成功寫入了後台的json文件裡
+            if (data.status == 200) {
+              this.queryData();
             }
             // 清空表單
             this.id = "";
@@ -185,23 +190,13 @@
             // 禁止修改id
             this.flag = true;
             this.name = book[0].name;
-            var date = new Date().getTime();
           },
-          deleteBook: function (id) {
-            // 刪除圖書
-            // ——————————————————
-            // 方法1
-            // (1)根据id查询出要刪除的数据
-            // var index = this.books.findIndex(function (item) {
-            //   return item.id === id;
-            // });
-            // (2)根據索引刪除數組元素
-            // this.books.splice(index, 1);
-            // ——————————————————
-            // 方法2
-            this.books = this.books.filter(function (item) {
-              return item.id != id;
-            });
+          deleteBook: async function (id) {
+            var data = await axios.delete("/books/bookId/" + id);
+            // 如果data.status ==200，表示把數據成功寫入了後台的json文件裡
+            if (data.status == 200) {
+              this.queryData();
+            }
           },
         },
         computed: {
@@ -212,32 +207,53 @@
         },
         watch: {
           id: async function (val) {
-            if (val.trim().length > 0) {
-              if (val < 0) {
-                alert("編號是正整數");
+            let flg = val == "" ? false : true;
+            if (flg) {
+              if (val <= 0) {
+                alert("編號必須是正整數");
                 this.id = "";
+                return;
               }
               // 驗證id是否存在
-              var res = await axios.get("/books/bookId/" + this.id);
-              if (res.status == 1) {
+              var data = await axios.get("/books/bookId/" + this.id);
+              this.maxId = data.maxId;
+              if (data.status == 1) {
                 // 圖書id存在
-                this.submitFlag = true;
+                this.idSubmitFlag = true;
               } else {
                 // 圖書id不存在
+                this.idSubmitFlag = false;
+              }
+              // id和name都不存在時，才能把提交按鈕設置成可以提交（disable為false）
+              if (!this.idSubmitFlag && !this.nameSubmitFlag) {
                 this.submitFlag = false;
+              } else {
+                // 否則，排除編輯狀態（flag=false，因為這個狀態id存在），把提交按鈕設置成無法提交（disable為true）
+                if (!this.flag) {
+                  this.submitFlag = true;
+                }
               }
             }
           },
           name: async function (val) {
             if (val.trim().length > 0) {
               // 驗證圖書名稱是否存在
-              var res = await axios.get("/books/book/" + this.name);
-              if (res.status == 1) {
+              var data = await axios.get("/books/book/" + this.name);
+              if (data.status == 1) {
                 // 圖書存在
-                this.submitFlag = true;
+                this.nameSubmitFlag = true;
               } else {
                 // 圖書名不存在
+                this.nameSubmitFlag = false;
+              }
+              // id和name都不存在時，才能把提交按鈕設置成可以提交（disable為false）
+              if (!this.idSubmitFlag && !this.nameSubmitFlag) {
                 this.submitFlag = false;
+              } else {
+                // 否則，排除編輯狀態（flag=false，因為這個狀態id存在），把提交按鈕設置成無法提交（disable為true）
+                if (!this.flag) {
+                  this.submitFlag = true;
+                }
               }
             }
           },
