@@ -30,13 +30,16 @@ exports.getAllBooks = (req, res) => {
   res.json(data);
 }
 
-// 驗證圖書編號是否存在，如果存在，返回1，如果不存在，返回2
+// 驗證圖書編號是否存在，如果存在，返回1，如果不存在，返回2；返回目前的最大id值；返回該id的讀書信息
 exports.checkId = (req, res) => {
   let id = req.params.id;
   let flag = false;
+  let book = {};
   data.some(item => {
     if (id == item.id) {
       flag = true;
+      book.id = item.id;
+      book.name = item.name
       return true;
     }
   })
@@ -44,12 +47,14 @@ exports.checkId = (req, res) => {
   if (flag) {
     res.json({
       status: 1,
-      maxId
+      maxId,
+      book
     })
   } else {
     res.json({
       status: 2,
-      maxId
+      maxId,
+      book
     })
   }
 }

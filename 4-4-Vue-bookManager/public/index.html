@@ -23,7 +23,7 @@
                 v-focus
               />
               <label for="name">名稱：</label>
-              <input type="text" id="name" v-model="name" />
+              <input type="text" id="name" v-model.trim="name" />
               <button @click="addBook" :disabled="submitFlag">
                 提交圖書信息
               </button>
@@ -141,7 +141,7 @@
             this.books = data;
           },
           addBook: async function () {
-            if (this.name.trim().length == 0) {
+            if (this.name.length == 0) {
               alert("書籍名稱不能為空");
               return;
             }
@@ -180,16 +180,15 @@
             this.id = "";
             this.name = "";
           },
-          forEditBook: function (id) {
+          forEditBook: async function (id) {
             // 根据id查询出要编辑的数据
-            var book = this.books.filter(function (item) {
-              return item.id === id;
-            });
+            // 要去數據庫拿信息，而不是this.data中拿信息，因為可能同時有其他人在編輯信息。從數據庫裡拿，可以保證拿到的盡可能新的信息。
+            var data = await axios.get("/books/bookId/" + id);
             // 把获取到的信息填充到表单
-            this.id = book[0].id;
+            this.id = data.book.id;
+            this.name = data.book.name;
             // 禁止修改id
             this.flag = true;
-            this.name = book[0].name;
           },
           deleteBook: async function (id) {
             var data = await axios.delete("/books/bookId/" + id);
@@ -207,14 +206,14 @@
         },
         watch: {
           id: async function (val) {
-            let flg = val == "" ? false : true;
+            let flg = val == "" ? false : true; //只有id輸入框中有內容時，才監聽id
             if (flg) {
               if (val <= 0) {
                 alert("編號必須是正整數");
                 this.id = "";
                 return;
               }
-              // 驗證id是否存在
+              // 驗證id是否存在，同時取得當前的最大id值+1
               var data = await axios.get("/books/bookId/" + this.id);
               this.maxId = data.maxId;
               if (data.status == 1) {
@@ -236,7 +235,8 @@
             }
           },
           name: async function (val) {
-            if (val.trim().length > 0) {
+            //只有name輸入框有值的時候才監聽
+            if (val.length > 0) {
               // 驗證圖書名稱是否存在
               var data = await axios.get("/books/book/" + this.name);
               if (data.status == 1) {
@@ -259,7 +259,7 @@
           },
         },
         mounted: function () {
-          // 該聲明週期狗子函數被觸發的時候，模板已經可以使用。一般此時用於獲取後台數據，然後把數據填充到模板
+          // 該聲明週期鉤子函數被觸發的時候，模板已經可以使用。一般此時用於獲取後台數據，然後把數據填充到模板
           this.queryData();
         },
       });
