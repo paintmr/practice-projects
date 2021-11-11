@@ -228,8 +228,8 @@
         routes: [
           {
             path: "/",
-            redirect: "/users",
             component: App,
+            redirect: "/users", //重定向後，既會展示根組件App，也會展示子組件Users
             children: [
               { path: "/users", component: Users },
               { path: "/userinfo/:id", component: UserInfo, props: true },
