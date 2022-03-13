@@ -58,13 +58,14 @@ export default {
       }
     },
     async sendFile() {
-      const formData = new FormData();
-      formData.append('file', this.file);
       if (!this.file) {
         this.message = "You have upload NOTHING"
         this.error = true;
         return false;
       }
+      const formData = new FormData();
+      formData.append('file', this.file);
+
       try {
         const res = await axios.post('/upload', formData);
         if (res.data.alert) {
@@ -76,7 +77,7 @@ export default {
         }
         this.file ="";
       } catch (err) {
-        this.message = "Something went wrong";
+        this.message = err.response.data.error;
         this.file ="";
         this.error = true;
       }

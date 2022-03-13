@@ -2,7 +2,14 @@
   <div id="app">
     <div class="section">
       <div class="container">
-        <SimpleUpload/>
+        <div class="columns">
+          <div class="column">
+            <SimpleUpload/>
+          </div>
+          <div class="column">
+            <multiple-uploads/>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -10,9 +17,11 @@
 
 <script>
 import SimpleUpload from './SimpleUpload.vue';
+import MultipleUploads from './MultipleUploads.vue';
+
 export default {
   name: 'App',
-  components: {SimpleUpload}
+  components: {SimpleUpload, MultipleUploads}
 }
 </script>
 

@@ -11,10 +11,10 @@ const fileFilter = function (req, file, cb) {
     const error = new Error("Wrong file type");
     error.code = "LIMIT_FILE_TYPES";
     return cb(error, false);
-  }
+  };
   cb(null, true);
 }
-const MAX_SIZE = 2000000;
+const MAX_SIZE = 200000;
 
 const upload = multer({
   dest: './uploads/',
@@ -24,11 +24,12 @@ const upload = multer({
   }
 })
 
-const uploadErrMsg = function (req, res, next) {
-  upload.single('file')(req, res, function (err) {
+const singleUpload = upload.single('file')
+app.post('/upload', (req, res) => {
+  singleUpload(req, res, function (err) {
     if (err) {
       if (err.code === "LIMIT_FILE_TYPES") {
-        res.status(422).json({ error: "Only images are allowed" });
+        res.status(421).json({ error: "Only images are allowed" });
         return;
       }
       if (err.code === "LIMIT_FILE_SIZE") {
@@ -36,17 +37,38 @@ const uploadErrMsg = function (req, res, next) {
         return;
       }
     }
+    if (!req.file) {
+      res.json({ alert: "You have upload NOTHING" })
+    } else {
+      console.log(req.file)
+      res.json({ singleFile: "singleFile", file: req.file })
+    }
   })
-  next()
-}
+})
 
-app.use(uploadErrMsg);
+const multiUpload = upload.array('files');
+app.post('/multiple', (req, res) => {
+  multiUpload(req, res, (err) => {
+    if (err) {
+      if (err.code === "LIMIT_FILE_TYPES") {
+        res.status(423).json({ error: "All files should be images" });
+        return;
+      }
+      if (err.code === "LIMIT_FILE_SIZE") { // 这个完全无效
+        res.status(424).json({ error: `At least one file too large. Max size is ${MAX_SIZE / 1000}KB` });
+        return;
+      }
+    }
+    if (req.files.length == 0) {
+      res.json({ alert: "You have upload NOTHING" })
+    }
+    else {
+      console.log(req.files)
+      res.json({ multiFile: "multiFile", files: req.files })
+    }
+  })
 
-app.post('/upload', upload.single('file'), (req, res) => {
-  if (req.file == undefined) {
-    res.json({ alert: "You have upload NOTHING" })
-  }
-  res.json({ woof: "woof", file: req.file })
+
 })
 
 app.listen(3344, () => console.log("Running on localhost:3344"));
