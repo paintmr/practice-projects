@@ -24,6 +24,10 @@ const upload = multer({
   }
 })
 
+const dropZoneUpload = multer({
+  dest: './dropZoneUpload'
+})
+
 const singleUpload = upload.single('file')
 app.post('/upload', (req, res) => {
   singleUpload(req, res, function (err) {
@@ -67,8 +71,10 @@ app.post('/multiple', (req, res) => {
       res.json({ multiFile: "multiFile", files: req.files })
     }
   })
+})
 
-
+app.post("/dropzone", dropZoneUpload.single("file"), (req, res) => {
+  res.json({ file: req.file });
 })
 
 app.listen(3344, () => console.log("Running on localhost:3344"));

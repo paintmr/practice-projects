@@ -12,16 +12,22 @@
         </div>
       </div>
     </div>
+
+    <div class="section">
+      <Dropzone />
+    </div>
   </div>
 </template>
 
 <script>
 import SimpleUpload from './SimpleUpload.vue';
 import MultipleUploads from './MultipleUploads.vue';
+import Dropzone from './Dropzone.vue';
+
 
 export default {
   name: 'App',
-  components: {SimpleUpload, MultipleUploads}
+  components: {SimpleUpload, MultipleUploads, Dropzone}
 }
 </script>
 
