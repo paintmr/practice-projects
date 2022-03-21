@@ -16,12 +16,22 @@
           <progress class="progress is-info" :value="progress" max="100">{{progress}} %</progress>
         </p>
       </div>
+
       <div class="content">
         <ul>
           <li v-for="file in dropZoneFiles" :key="file.originalname">
-            {{file.originalname}}
+            <!-- {{file.originalname}} -->
+            {{file}}
           </li>
         </ul>
+      </div>
+
+      <div class="columns is-multiline is-mobile">
+        <div v-for="file in dropZoneFiles" :key="file" class="column is-one-quarter">
+          <figure class="image">
+            <img :src="file">
+          </figure>
+        </div>
       </div>
     </form>
   </div>

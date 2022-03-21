@@ -1,8 +1,14 @@
 const express = require('express');
 const app = express();
+const sharp = require('sharp');
+const fs = require('fs');
+// const path = require('path')
 
 // Multer is a node.js middleware for handling multipart/form-data, which is primarily used for uploading files.
 const multer = require('multer');
+
+// app.use("/static", express.static(path.join(__dirname), "static"))
+app.use("/static", express.static("static"))
 
 // 检查传过来的文件是否为图片
 const fileFilter = function (req, file, cb) {
@@ -25,7 +31,7 @@ const upload = multer({
 })
 
 const dropZoneUpload = multer({
-  dest: './dropZoneUpload'
+  dest: './dropZoneUpload/',
 })
 
 const singleUpload = upload.single('file')
@@ -73,8 +79,21 @@ app.post('/multiple', (req, res) => {
   })
 })
 
-app.post("/dropzone", dropZoneUpload.single("file"), (req, res) => {
-  res.json({ file: req.file });
+app.post("/dropzone", dropZoneUpload.single("file"), async (req, res) => {
+  // app.post("/dropzone", upload.single("file"), async (req, res) => {
+  try {
+    console.log(req.file)
+    await sharp(req.file.path)
+      .resize(300)
+      .toFile(`./static/${req.file.originalname}`);
+
+    fs.unlink(req.file.path, () => {
+      res.json({ file: `/static/${req.file.originalname}` })
+    })
+  } catch (err) {
+    console.log(err)
+    res.status(999).json({ err });
+  }
 })
 
 app.listen(3344, () => console.log("Running on localhost:3344"));
