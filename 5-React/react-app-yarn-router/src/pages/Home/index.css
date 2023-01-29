@@ -1,0 +1,12 @@
+.home-nav {
+  background-color: #ccc;
+}
+
+.home-nav-item {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.home-show {
+  background-color: #fce4a8;
+}

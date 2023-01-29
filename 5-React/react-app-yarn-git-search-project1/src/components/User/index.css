@@ -1,0 +1,23 @@
+.user {
+  width: 100px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  list-style: none;
+}
+
+.user .user-avatar {
+  width: 100%;
+  border-radius: 3px;
+}
+
+.user a {
+  text-decoration: none;
+}
+
+.user-name {
+  text-align: center;
+  color: black;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

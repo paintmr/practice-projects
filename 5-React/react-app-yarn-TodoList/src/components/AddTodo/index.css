@@ -1,0 +1,8 @@
+.get-todo input {
+  width: 99%;
+  height: 30px;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0 0 0 5px;
+}

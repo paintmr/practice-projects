@@ -1,0 +1,41 @@
+.App {
+  width: 600px;
+  margin: 50px auto;
+}
+
+.nav-wrap {
+  display: flex;
+}
+
+.nav {
+  width: 100px;
+  height: 60px;
+  background-color: #3e6b7e;
+  border: 3px solid #00314f;
+}
+
+.nav .nav-item {
+  margin-bottom: 10px;
+}
+
+.nav .nav-item:hover {
+  cursor: pointer;
+  background-color: #b53f45;
+}
+
+.active {
+  background-color: #b53f45;
+  color: #fff;
+}
+
+a {
+  display: block;
+  text-decoration: none;
+  color: black;
+}
+
+.show {
+  width: 500px;
+  background-color: #85a894;
+  color: #00314f;
+}

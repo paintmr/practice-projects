@@ -1,0 +1,34 @@
+.show-todo-list {
+  margin-top: 15px;
+  height: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.checkAll {
+  margin-right: 10px;
+}
+
+.divider {
+  margin: 0 10px;
+  color: gray;
+  font-size: 10px;
+}
+
+.show-todo-list .del-btn {
+  background-color: salmon;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.choice:hover {
+  cursor: pointer;
+}
+
+.TodosShown {
+  border-radius: 5px;
+  background-color: salmon;
+  padding: 5px;
+}

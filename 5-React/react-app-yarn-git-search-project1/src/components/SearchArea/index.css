@@ -1,0 +1,29 @@
+.search-area-wrap {
+  background-color: #00314f;
+  border-radius: 10px;
+  padding: 10px 10px 30px;
+  color: #fff;
+  text-align: center;
+}
+
+.search-area-wrap .inpt {
+  margin-right: 10px;
+  height: 30px;
+  line-height: 30px;
+  box-sizing: border-box;
+  border: none;
+  /* outline: none; */
+  border-radius: 5px;
+  padding-left: 7px;
+}
+
+.search-area-wrap .btn {
+  height: 32px;
+  cursor: pointer;
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: none;
+  /* background-color: #fce4a8; */
+  background-color: #b53f45;
+  color: #fff;
+}

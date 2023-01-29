@@ -1,0 +1,15 @@
+.user-list {
+  margin-top: 30px;
+}
+
+.ul-title {
+  text-align: center;
+}
+
+.users {
+  width: 620px;
+  padding: 0;
+  display: flex;
+  flex-flow: wrap;
+  justify-content: space-between;
+}

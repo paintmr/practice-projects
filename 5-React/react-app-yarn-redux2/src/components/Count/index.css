@@ -1,0 +1,19 @@
+.Count {
+  margin: 50px 50px;
+}
+select,
+button {
+  width: 100px;
+  height: 50px;
+  margin-right: 20px;
+  cursor: pointer;
+  border-radius: 10px;
+  border: none;
+  background-color: #ffdd94;
+  outline: none;
+  text-align: center;
+}
+
+.sum {
+  margin-top: 20px;
+}
