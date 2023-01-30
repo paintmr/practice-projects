@@ -1,0 +1,12 @@
+.people input,
+.people button {
+  width: 150px;
+  height: 50px;
+  margin-right: 20px;
+  background-color: #ffd000;
+  border: none;
+  border-radius: 10px;
+}
+.people input {
+  outline: none;
+}
